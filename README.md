@@ -1,4 +1,4 @@
-!! README IS MOSTLY COPIED FROM SOURCE RESPOSITORY ANRGUSC/DAISIM
+!! README IS MOSTLY COPIED FROM SOURCE RESPOSITORY ANRGUSC/DAISIM ( https://github.com/ANRGUSC/DAISIM/tree/main )
 
 # DAISIM
 The repository contains code for simulating a population of investors in the DAI Ecosystem. 
