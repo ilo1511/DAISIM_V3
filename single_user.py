@@ -106,7 +106,7 @@ def run_loop(eth_price):
     w = 0.001  # Risk Averseness
     rho = 2.5  # Liquidation Ratio
 
-    h = [1, 2, 3, 4]  # example herd behavior values for three investors
+    h = [1, 2, 3]  # example herd behavior values for three investors
     for i, cdp_rate in enumerate([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.34]):
         x = optimize(x_base, rho, 0.04, cdp_rate, w, eth_price, 1, eth_price, h[i % len(h)], False)
 
