@@ -38,11 +38,11 @@ will be used to run 5 * 3 = 15 single market simulations with the given asset al
 10                                           // num_investors
 1840 5 1840 0 0.001 4                        // Investor#0 Assets, Risk = 0.001, Herding = 4
 970 4 970 0 0.01 1                            // Investor#1 Assets, Risk = 0.001, Herding = 1
-900 8 900 200 0.001 4                         // Investor#2 Assets, Risk = 0.01, Herding = 1
-710 5 710 300 0.01 1                           // Investor#3 Assets, Risk = 0.01, Herding = 1
-840 6 840 50 0.001 4                            // Investor #4 Assets, Risk = 0.001, Herding = 4
-1040 2 1040 20 0.01 1                            // Investor #5 Assets, Risk = 0.01, Herding = 1
-1360 8 1360 80 0.001 4                        // Investor #6 Assets, Risk = 0.001, Herding = 4
+900 8 900 0 0.001 4                         // Investor#2 Assets, Risk = 0.01, Herding = 1
+710 5 710 0 0.01 1                           // Investor#3 Assets, Risk = 0.01, Herding = 1
+840 6 840 0 0.001 4                            // Investor #4 Assets, Risk = 0.001, Herding = 4
+1040 2 1040 0 0.01 1                            // Investor #5 Assets, Risk = 0.01, Herding = 1
+1360 8 1360 0 0.001 4                        // Investor #6 Assets, Risk = 0.001, Herding = 4
 870 8 870 0 0.01 1                            // Investor #7 Assets, Risk = 0.01, Herding = 1
 1340 7 1340 0 0.001 4                        // Investor #8 Assets, Risk = 0.001, Herding = 4
 890 4 890 0 0.01 1                        // Investor #9 Assets, Risk = 0.01, Herding = 1
