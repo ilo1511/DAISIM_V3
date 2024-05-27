@@ -21,8 +21,10 @@ The repository contains code for simulating a population of investors in the DAI
     - `eth_price_feed`: ETH Price over several days. For a n-day market simulation this is vector of size `n` containing ETH price for each day. 
     - `dai_price`: Initial Price of DAI. Set to $1.
     - `num_investors`: Number of optimal investors participating in the market simulation.
-    - `assets_and_risk`: Initial asset holdings and risk preference for all investors. This is a vector of size `(num_investors,5)` with each 
-    investors `assets_and_risk` a vector `[USD, ETH, DAI, cETH, risk_param]`. A lower numerical value for risk translates to high risk.
+    - `assets_and_risk`: Initial asset holdings, risk preference and herding factor for all investors. This is a vector of size `(num_investors,6)` with each 
+    investors `assets_and_risk` a vector `[USD, ETH, DAI, cETH, risk_param]`.
+            - A lower numerical value for risk translates to high risk.
+            - A lower numerical value for herding translates to lower herding
     - `belief_factor`: A constant indicating the strength of investors' belief that the price of DAI is 1.
     - 'alpha': a constant that influences the price change sensitivity of our herding exponential function
    
