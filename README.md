@@ -30,7 +30,7 @@ The repository contains code for simulating a population of investors in the DAI
    
 
 - A sample config file is shown below for a MAKER DAO market simulation for a set of `tx_fee` and `cdp_rate` combinations. The config
-will be used to run 5 * 3 = 15 single market simulations with the given asset allocations and risk parameters for 4 investors.
+will be used to run 5 * 3 = 15 single market simulations with the given asset allocations and risk parameters for 10 investors.
 ```editorconfig
 6 7 0.01                                    // cdp_rate = [0.02, 0.03, 0.04, 0.05, 0.06]
 1 2 0.01                                     // tx_fees = [0.05, 0.06, 0.07]
