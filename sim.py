@@ -76,14 +76,21 @@ def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_pe
     results = pool.starmap(run_on_thread, args)
 
     # Get all required parameters and dump to pickle
-    cdp_axis = [args[i][3] for i in range(len(args))]
-    txf_axis = [args[i][4] for i in range(len(args))]
-    run_axis = [args[i][5] for i in range(len(args))]
+    belief_factor_axis = [args[i][1] for i in range(len(args))]
+    risk_params_axis = [args[i][3] for i in range(len(args))]
+    herd_params_axis = [args[i][4] for i in range(len(args))]
+    cdp_axis = [args[i][5] for i in range(len(args))]
+    txf_axis = [args[i][6] for i in range(len(args))]
+    run_axis = [args[i][7] for i in range(len(args))]
+    eth_price_per_day_axis = [args[i][8] for i in range(len(args))]
     dai_axis = [res[0] for res in results]
     asset_history = [res[1] for res in results]
 
-    dump = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params, herd_params]
+    dump = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis]
+    ##print(dai_axis)
+    ##print("DUMP")
     pickle.dump(dump, sumfile)
+    print(sumfile)
 
 
 if __name__ == '__main__':
@@ -140,7 +147,7 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-
+    print(args)
     # Clear log directory if found
     if os.path.exists(args.logdir):
         os.system("rm -rvf " + args.logdir + "/*")
@@ -183,7 +190,9 @@ if __name__ == '__main__':
         ASSETS = [assets]
         RISK = risk_params
         HERD = herd_params
-
+        print(ASSETS)
+        print(RISK)
+        print(HERD)
     if len(eth_price_per_day) < args.days_per_config:
         args.days_per_config = len(eth_price_per_day)
         print("days_per_config supplied was greater than length of price list")
