@@ -36,12 +36,12 @@ def matplotlib_z_with_y_legend(x, y, z, xtitle, ytitle, ztitle, plotname):
     fig.savefig(plotname + '.png', dpi=fig.dpi)
 
 
-def matplotlib_price_history_with_fixed_cdp(txf_axis, cdp_axis, dai_price_history_axis, cdp_rate, xtitle, ytitle,
+def matplotlib_price_history_with_fixed_cdp(txf_axis, cdp_axis, dai_axis, cdp_rate, xtitle, ytitle,
                                             plotname):
     fig = mp.figure()
 
     # generate an axis with numbers 1 -> number of days
-    days_axis = [i for i in range(1, len(dai_price_history_axis[0]) + 1)]
+    days_axis = [i for i in range(1, len(dai_axis[0]) + 1)]
 
     txf_filter_axis = []
     dai_price_history_filter_axis = []
@@ -50,7 +50,7 @@ def matplotlib_price_history_with_fixed_cdp(txf_axis, cdp_axis, dai_price_histor
     for i in range(len(cdp_axis)):
         if cdp_axis[i] == cdp_rate:
             txf_filter_axis.append(txf_axis[i])
-            dai_price_history_filter_axis.append(dai_price_history_axis[i])
+            dai_price_history_filter_axis.append(dai_axis[i])
 
     for k in range(0, len(txf_filter_axis)):
         x_d = days_axis
@@ -66,12 +66,12 @@ def matplotlib_price_history_with_fixed_cdp(txf_axis, cdp_axis, dai_price_histor
     fig.savefig(plotname + '.png', dpi=fig.dpi)
 
 
-def matplotlib_price_history_with_fixed_txf(txf_axis, cdp_axis, dai_price_history_axis, tx_fee, xtitle, ytitle,
+def matplotlib_price_history_with_fixed_txf(txf_axis, cdp_axis, dai_axis, tx_fee, xtitle, ytitle,
                                             plotname):
     fig = mp.figure()
 
     # generate an axis with numbers 1 -> number of days
-    days_axis = [i for i in range(1, len(dai_price_history_axis[0]) + 1)]
+    days_axis = [i for i in range(1, len(dai_axis[0]) + 1)]
 
     cdp_filter_axis = []
     dai_price_history_filter_axis = []
@@ -80,7 +80,7 @@ def matplotlib_price_history_with_fixed_txf(txf_axis, cdp_axis, dai_price_histor
     for i in range(len(cdp_axis)):
         if txf_axis[i] == tx_fee:
             cdp_filter_axis.append(cdp_axis[i])
-            dai_price_history_filter_axis.append(dai_price_history_axis[i])
+            dai_price_history_filter_axis.append(dai_axis[i])
 
     for k in range(0, len(cdp_filter_axis)):
         x_d = days_axis
@@ -96,7 +96,7 @@ def matplotlib_price_history_with_fixed_txf(txf_axis, cdp_axis, dai_price_histor
     fig.savefig(plotname + '.png', dpi=fig.dpi)
 
 
-def generate_asset_curve(cdp_axis, txf_axis, dai_price_history_axis, asset_history_axis, cur_dir, run_id):
+def generate_asset_curve(cdp_axis, txf_axis, dai_axis, asset_history_axis, cur_dir, run_id):
     # Stores how much is the final asset allocation for (cdprate,investor#) pair as txf increases.
     usd_cdp = defaultdict(list)
     eth_cdp = defaultdict(list)
@@ -132,7 +132,7 @@ def generate_asset_curve(cdp_axis, txf_axis, dai_price_history_axis, asset_histo
     num_investors = len(asset_history_axis[0][0])
 
     # Data reformatting
-    for cdp, txf, daip, a_h in zip(cdp_axis, txf_axis, dai_price_history_axis, asset_history_axis):
+    for cdp, txf, daip, a_h in zip(cdp_axis, txf_axis, dai_axis, asset_history_axis):
         daip_cdp[cdp].append((daip, txf))
         daip_txf[txf].append((daip, cdp))
 
@@ -450,7 +450,7 @@ def generate_asset_curve(cdp_axis, txf_axis, dai_price_history_axis, asset_histo
 
 def gen_plots_for_run(filename, data, run_id):
     cur_dir = os.path.dirname(filename)
-    cdp_axis, txf_axis, run_axis, dai_price_history_axis, asset_history, risk_params = data
+    cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis = data
 
     # Filter points for run_id
     cdp = []
@@ -462,8 +462,8 @@ def gen_plots_for_run(filename, data, run_id):
         if run_axis[i] == run_id:
             cdp.append(cdp_axis[i])
             txf.append(txf_axis[i])
-            daip.append(dai_price_history_axis[i][-1])
-            dai_price_history_axis_filter.append(dai_price_history_axis[i])
+            daip.append(dai_axis[i][-1])
+            dai_price_history_axis_filter.append(dai_axis[i])
             asset_history_filter.append(asset_history[i])
 
     plot_name = os.path.join(cur_dir, "plots", "final_settling_price_cdp_on_x_" + str(run_id))
@@ -492,10 +492,14 @@ def gen_plots_for_run(filename, data, run_id):
 # Generate Plots
 def gen_plots(filename):
     input_file = open(filename, 'rb')
-    cdp_axis, txf_axis, run_axis, dai_price_history_axis, asset_history, risk_params = pickle.load(input_file)
-    data = [cdp_axis, txf_axis, run_axis, dai_price_history_axis, asset_history, risk_params]
+    ##print(filename)
+    ##print(len(test))
+    ##for t in test:
+      ##  print(t)
+    cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis = pickle.load(input_file)
+    data = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis]
     input_file.close()
-
+        
     cur_dir = os.path.dirname(filename)
     os.makedirs(os.path.join(cur_dir, "plots"), exist_ok=True)
 
@@ -517,6 +521,9 @@ if __name__ == '__main__':
         required=True,
         help="Path to a sim-summary.pickle"
     )
-
+    
     args = parser.parse_args()
+    print(args.data)
+    print ("DONE")
     gen_plots(args.data)
+    
