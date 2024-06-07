@@ -1,5 +1,6 @@
 import argparse
 from simulation_util import get_risk_params
+from simulation_util import get_herd_params
 import os
 from util import get_truncated_normal
 import itertools
@@ -7,7 +8,7 @@ import json
 
 # If this is enabled, we generate 2^{investors} test configs for each {txf, cdp} pair.
 RISK_PARAM_TESTING = False
-
+HERD_PARAM_TESTING = False
 
 def get_factorial_params(config_path):
     f = open(config_path, "r")
@@ -52,6 +53,9 @@ def get_risk_params_bitmask(bitmask):
     risk_params_set = [0.003, 0.01]
     return [risk_params_set[k] for k in bitmask]
 
+def get_herd_params_bitmask(bitmask):
+    herd_params_set = [1, 5]
+    return [herd_params_set[k] for k in bitmask]
 
 def get_all_bitmasks(num_investors):
     bitmasks = []
@@ -85,13 +89,18 @@ def generate_configs(args):
 
     # Fixed risk profile for all configs
     risk_params = get_risk_params(investors)
+    herd_params = get_herd_params(investors)
 
     # If RISK_PARAM_TESTING is enabled we generate a test case for every possible risk bitmask.
     if RISK_PARAM_TESTING:
         risk_bitmasks = get_all_bitmasks(investors)
     else:
-        risk_bitmasks  = []
+        risk_bitmasks = []
 
+    if HERD_PARAM_TESTING:
+        herd_bitmasks = get_all_bitmasks(investors)
+    else:
+        herd_bitmasks = []  
     # Initial Distribution Tests
     for fact_param in fact_params:
         print("Generating Configs for", fact_param)
@@ -116,12 +125,13 @@ def generate_configs(args):
                 temp_fact_param["risk_bitmask"] = bitmask_string
 
                 risk_params = get_risk_params_bitmask(risk_bitmask)
+                herd_params = get_herd_params_bitmask(risk_bitmask)  # Assuming similar bitmask for herd params
 
                 asset_distribution_lines = []
                 for inv in range(len(USD)):
                     asset_distribution_lines.append(
                         str(USD[inv]) + " " + str(ETH[inv]) + " " + str(DAI[inv]) + " " + str(cETH[inv]) + " " + str(
-                            risk_params[inv]))
+                            risk_params[inv]) + " " + str(herd_params[inv]))
 
                 filename = os.path.join(config_dir, "experiment_" + fact_param_to_string(temp_fact_param) + ".config")
                 infile = open(filename, "w+")
@@ -135,7 +145,7 @@ def generate_configs(args):
             for inv in range(len(USD)):
                 asset_distribution_lines.append(
                     str(USD[inv]) + " " + str(ETH[inv]) + " " + str(DAI[inv]) + " " + str(cETH[inv]) + " " + str(
-                        risk_params[inv]))
+                        risk_params[inv]) + " " + str(herd_params[inv]))  # Assuming herd_params is defined outside the loop
 
                 filename = os.path.join(config_dir, "experiment_" + fact_param_to_string(fact_param) + ".config")
                 infile = open(filename, "w+")
