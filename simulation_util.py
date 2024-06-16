@@ -8,12 +8,20 @@ LOG_ITER = 10
 
 
 def get_risk_params(n):
-    risk_params = [0.001, 0.01]
-    return [risk_params[i % 2] for i in range(n)]
+    risk_params_lst = []
+    herd_params_lst = []
+    for i in range(n):
+        if random.random() < 0.5:
+            risk_params_lst.append(0.001)
+            herd_params_lst.append(5)
+        else:
+            risk_params_lst.append(0.01)
+            herd_params_lst.append(1)
+    return risk_params_lst
 
 def get_herd_params(n):
-    herd_params = [1, 5]
-    return [herd_params[i % 2] for i in range(n)]
+    herd_params_lst = []
+    return herd_params_lst
 
 def get_assets(n, dist="normal"):
     if dist == "uniform":
