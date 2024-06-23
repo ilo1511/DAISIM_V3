@@ -7,7 +7,7 @@ import random
 LOG_ITER = 10
 
 
-def get_risk_params(n):
+def get_risk_and_herd_params(n):
     risk_params_lst = []
     herd_params_lst = []
     for i in range(n):
@@ -17,11 +17,16 @@ def get_risk_params(n):
         else:
             risk_params_lst.append(0.01)
             herd_params_lst.append(1)
-    return risk_params_lst
+    return risk_params_lst, herd_params_lst
 
-def get_herd_params(n):
-    herd_params_lst = []
-    return herd_params_lst
+def get_alpha(n):
+    alpha_lst = []
+    for i in range(n):
+        if random.random() < 0.5:
+            alpha_lst.append(0.5)
+        else:
+            alpha_lst.append(0.1)
+    return alpha_lst
 
 def get_assets(n, dist="normal"):
     if dist == "uniform":
@@ -189,7 +194,7 @@ class Simulator:
     def run_simulation(self):
         dai_price = self.dai_price
         # dai_price = 1
-        iterations = 100
+        iterations = 50
 
         users = [User(self.initial_distribution[i], self.rho) for i in range(len(self.initial_distribution))]
 
@@ -204,10 +209,11 @@ class Simulator:
             for j in range(self.sample_size):
                 risk_param = self.risk_params[j]
                 herd_param = self.herd_params[j]
+                alpha_param = self.alpha[j]
 
                 proposed_assets = optimize(self.belief_factor, users[j].getAssets(), self.rho, self.txf, self.cdpRate, risk_param, herd_param,
                                            self.eth_price,
-                                           dai_price,self.eth_price_last_period, self.alpha, False)
+                                           dai_price,self.eth_price_last_period, alpha_param, False)
 
                 old_assets = users[j].getAssets()
                 stats.append([old_assets, proposed_assets])
