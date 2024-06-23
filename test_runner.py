@@ -1,5 +1,6 @@
 import os
 import argparse
+import subprocess
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test Runner CLI')
@@ -28,19 +29,35 @@ if __name__ == '__main__':
     config_lst = []
     for config in os.listdir(args.configdir):
         config_lst.append(config)
-
-    config_lst.remove(".DS_Store")  
-    config_lst.remove("Fact_config.config")
+    
+    if ".DS_Store" in config_lst:
+        config_lst.remove(".DS_Store")
+    if "Fact_config.config" in config_lst:
+        config_lst.remove("Fact_config.config")
       
     for config in config_lst:
         print("Running Test with config", config)
         log_subdir = config[:-7]
+        config_path = os.path.join(args.configdir, config)
+        log_path = os.path.join(args.logdir, log_subdir)
+        
         print(config)
         print(args.configdir)
-        os.system("python3 sim.py --config " + os.path.join(args.configdir, config) + " --logdir " + os.path.join(args.logdir,log_subdir) + " --days_per_config 1")
-        os.system("python3 plot_gen.py --data " + os.path.join(args.logdir, log_subdir, "sim-summary.pickle"))
-
-
-
-
-
+        
+        # Running sim.py
+        sim_command = [
+            "python3", "sim.py",
+            "--config", config_path,
+            "--logdir", log_path,
+            "--days_per_config", "1"
+        ]
+        subprocess.run(sim_command)
+        
+        print("BOOM")
+        
+        # Running plot_gen.py
+        ##plot_command = [
+        ##    "python3", "plot_gen.py",
+        ##    "--data", os.path.join(log_path, "sim-summary.pickle")
+        ##]
+        ##subprocess.run(plot_command)
