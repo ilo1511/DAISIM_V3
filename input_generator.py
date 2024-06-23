@@ -123,6 +123,10 @@ def generate_configs(args):
             investors)
         cETH = [0 for i in range(investors)]
 
+        ## Generate risk, herding and alpha
+        alpha = get_truncated_normal(mean=0.2, sd=0.1, low=0.001, upp=5).rvs(investors)
+        risk_params, herd_params = get_risk_and_herd_params(investors)
+
         investor_count_line = [str(investors)]
 
         belief_factor_line = [str(10)] # TODO: make this configurable
