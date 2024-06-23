@@ -77,7 +77,7 @@ def generate_configs(args):
     lines = [
         "6 7 0.01",
         "1 2 0.01",
-        "130 140 150 170 190 200 210 220 300 360 450 500 550 620 550 440 390 320 250 200 190 130 120 100 120 80 160 180 200 220 240 250 100 80 50"
+        "500 1000 1200 1300 1400 1500 1400 1300 1100 800"
     ]
 
     config_dir = args.config_dir
@@ -91,9 +91,6 @@ def generate_configs(args):
     # Create the config directory
     os.makedirs(config_dir, exist_ok=True)
 
-    # Fixed risk profile for all configs
-    risk_params, herd_params = get_risk_and_herd_params(investors)
-    alpha = get_alpha(investors)
 
     # If RISK_PARAM_TESTING is enabled we generate a test case for every possible risk bitmask.
     if RISK_PARAM_TESTING:
@@ -107,9 +104,9 @@ def generate_configs(args):
         herd_bitmasks = []  
     
     if ALPHA_TESTING:
-        alpha_bitmask = get_all_bitmasks(investors)
+        alpha_bitmasks = get_all_bitmasks(investors)
     else:
-        alpha_bitmask = []
+        alpha_bitmasks = []
         
     # Initial Distribution Tests
     for fact_param in fact_params:
@@ -141,7 +138,7 @@ def generate_configs(args):
                 # Assuming similar bitmask for herd params
                 risk_params = get_risk_params_bitmask(risk_bitmask)
                 herd_params = get_herd_params_bitmask(risk_bitmask)
-                alpha = get_alpha_bitmask (alpha_bitmask) 
+                alpha = get_alpha_bitmask (risk_bitmask) 
 
                 asset_distribution_lines = []
                 for inv in range(len(USD)):
@@ -160,8 +157,7 @@ def generate_configs(args):
             asset_distribution_lines = []
             for inv in range(len(USD)):
                 asset_distribution_lines.append(
-                    str(USD[inv]) + " " + str(ETH[inv]) + " " + str(DAI[inv]) + " " + str(cETH[inv]) + " " + str(
-                        risk_params[inv]) + " " + str(herd_params[inv]) + " " + str(alpha[inv]))  # Assuming herd_params is defined outside the loop
+                    str(USD[inv]) + " " + str(ETH[inv]) + " " + str(DAI[inv]) + " " + str(cETH[inv]) + " " + str(risk_params[inv]) + " " + str(herd_params[inv]) + " " + str(alpha[inv]))  
 
                 filename = os.path.join(config_dir, "experiment_" + fact_param_to_string(fact_param) + ".config")
                 infile = open(filename, "w+")
