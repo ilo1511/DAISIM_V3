@@ -9,7 +9,7 @@ RISK = None
 HERD = None
 
 
-def run_on_thread(sample_size, belief_factor, assets, risk_params, herd_params, cdp_rate, tx_fee, run_index, eth_price_per_day, alpha, days_per_config,
+def run_on_thread(sample_size, belief_factor, assets, risk_params, herd_params, cdp_rate, tx_fee, run_index, eth_price_per_day, days_per_config, alpha,
                   logdir, logger): 
     dai_price_history = []
     market_dai_history = []
@@ -39,19 +39,20 @@ def run_on_thread(sample_size, belief_factor, assets, risk_params, herd_params, 
     return dai_price_history, asset_history
 
 
-def generate_assets_and_risk(sample_size, test_type, runs):
+
+def generate_assets_and_params(sample_size, test_type, runs):
     # if ASSETS was populated from config, return. Else generate a random ASSETS
     if ASSETS is not None:
-        return ASSETS, RISK, HERD
+        return ASSETS, RISK, HERD, ALPHA
 
     assets_runs = [get_assets(sample_size, test_type) for k in range(runs)]
-    risk_params = get_risk_params(sample_size)
-    herd_params = get_herd_params(sample_size)
+    risk_params, herd_params = get_risk_and_herd_params(sample_size)
+    alpha = get_alpha(sample_size)
 
-    return assets_runs, risk_params, herd_params
+    return assets_runs, risk_params, herd_params, alpha
 
 
-def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_per_day, days_per_config, alpha, test_type, logdir, logger,
+def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_per_day, days_per_config, test_type, logdir, logger,
               sumfile):
     # Get number of CPUs
     cpus = mp.cpu_count()
@@ -64,7 +65,7 @@ def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_pe
 
     # Define initial allocation and risk distribution
     # If multiple runs, then each run has a different asset allocation, but same risk distribution.
-    assets_runs, risk_params, herd_params = generate_assets_and_risk(sample_size, test_type, runs)
+    assets_runs, risk_params, herd_params, alpha = generate_assets_and_params(sample_size, test_type, runs)
 
     for tx_fee in tx_fees:
         for cdp_rate in cdp_rates:
@@ -172,6 +173,7 @@ if __name__ == '__main__':
     assets = []
     risk_params = []
     herd_params = []
+    alpha = []
     if len(config_lines) > 3:
         # Config overrides parameters set in CLI, currently this only supports 1 run.
         print("Config might override parameters set by CLI")
@@ -180,19 +182,19 @@ if __name__ == '__main__':
         args.runs = 1
         for i in range(4, 4 + args.investors):
             line_split = list(map(float, config_lines[i].split(' ')))
-            assert (len(line_split) == 6)
+            assert (len(line_split) == 7)
 
-            assets.append(line_split[:-2])
-            risk_params.append(line_split[-2])
-            herd_params.append(line_split[-1])
+            assets.append(line_split[:-3])
+            risk_params.append(line_split[-3])
+            herd_params.append(line_split[-2])
+            alpha.append(line_split[-1])
 
         # Fix global values of ASSETS, RISK
         ASSETS = [assets]
         RISK = risk_params
         HERD = herd_params
-        print(ASSETS)
-        print(RISK)
-        print(HERD)
+        ALPHA = alpha
+        
     if len(eth_price_per_day) < args.days_per_config:
         args.days_per_config = len(eth_price_per_day)
         print("days_per_config supplied was greater than length of price list")
@@ -200,7 +202,6 @@ if __name__ == '__main__':
     cdp_rates = [float(cdp_config[2]) * i for i in range(int(cdp_config[0]), int(cdp_config[1]))]
     tx_fees = [float(txf_config[2]) * i for i in range(int(txf_config[0]), int(txf_config[1]))]
     belief_factor = float(config_lines[14])
-    alpha = float(config_lines[15])
 
     print("Input Parameters for Test")
     print("--investors", args.investors)
@@ -211,7 +212,7 @@ if __name__ == '__main__':
     print("--logidr", args.logdir)
     print("--config", args.config)
 
-    run_tests(args.investors, belief_factor, cdp_rates, tx_fees, args.runs, eth_price_per_day, alpha, args.days_per_config,  args.type,
+    run_tests(args.investors, belief_factor, cdp_rates, tx_fees, args.runs, eth_price_per_day, args.days_per_config,  args.type,
               args.logdir,
               args.log, sumfile) 
     sumfile.close()
