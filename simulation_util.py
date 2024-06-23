@@ -19,14 +19,6 @@ def get_risk_and_herd_params(n):
             herd_params_lst.append(1)
     return risk_params_lst, herd_params_lst
 
-def get_alpha(n):
-    alpha_lst = []
-    for i in range(n):
-        if random.random() < 0.5:
-            alpha_lst.append(0.5)
-        else:
-            alpha_lst.append(0.1)
-    return alpha_lst
 
 def get_assets(n, dist="normal"):
     if dist == "uniform":
@@ -155,7 +147,7 @@ class Simulator:
     initial_distribution = None
     risk_params = None
     herd_params = None
-    aplha = 0.5
+    alpha = 0.5
     logdir = None
     logger = False
     filename = None
@@ -187,7 +179,7 @@ class Simulator:
             cdpRate, txf, eth_price, sample_size, belief_factor), self.filename, self.logger)
 
         for i in range(len(self.initial_distribution)):
-            log("Investor %d Initial Assets: %s with Risk %f and Herding %f " % (
+            log("Investor %d Initial Assets: %s with Risk %f and Herding %f" % (
                 i + 1, getAssetLogString(self.initial_distribution[i]), self.risk_params[i], self.herd_params[i]), self.filename,
                 self.logger)
 
