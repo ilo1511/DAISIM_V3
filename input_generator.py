@@ -77,7 +77,7 @@ def generate_configs(args):
     lines = [
         "6 7 0.01",
         "1 2 0.01",
-        "500 1000 1200 1300 1400 1500 1400 1300 1100 800"
+        "500 1000 1200 1300 1400 1500 1400 1300 1100"
     ]
 
     config_dir = args.config_dir
@@ -109,6 +109,7 @@ def generate_configs(args):
         alpha_bitmasks = []
         
     # Initial Distribution Tests
+    
     for fact_param in fact_params:
         print("Generating Configs for", fact_param)
 
@@ -121,8 +122,8 @@ def generate_configs(args):
         cETH = [0 for i in range(investors)]
 
         ## Generate risk, herding and alpha
-        alpha = get_truncated_normal(mean=0.2, sd=0.1, low=0.001, upp=5).rvs(investors)
         risk_params, herd_params = get_risk_and_herd_params(investors)
+        alpha = get_alpha(investors)
 
         investor_count_line = [str(investors)]
 
