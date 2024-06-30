@@ -8,7 +8,7 @@ import hashlib
 
 real_dai = np.array([1,1.02,1,1])
 
-def analyse(filename):
+def analyse(filename, counter):
     input_file = open(filename, 'rb')
     cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_axis = pickle.load(input_file)
     data = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_axis]
@@ -19,9 +19,8 @@ def analyse(filename):
     h_low = np.min(herd_params_axis)
     h_high = np.max(herd_params_axis)
     
-    name = int(random.random()*10000000)
-    log_filename = 'Analyse/'+ str(name) + '_analysis_log.log'
-    
+    log_filename = f'Analyse/{counter}_analysis_log.log'
+        
     log(f'error: {error}', log_filename, flag=True)
     log(f'alpha: {alpha_axis[0][0]}', log_filename, flag=True )
         # Log h_low and h_high
@@ -55,7 +54,13 @@ if __name__ == '__main__':
         
     )
     
+    parser.add_argument(
+        "--counter",
+        type=int,
+        default=0,
+        required=True,
+        help="Counter to give name to analyse file"
+    )
+    
     args = parser.parse_args()
-    print(args.data)
-    print ("DONE")
-    analyse(args.data)
+    analyse(args.data, args.counter)

@@ -35,7 +35,9 @@ if __name__ == '__main__':
     if "Fact_config.config" in config_lst:
         config_lst.remove("Fact_config.config")
     
+    counter = 0
     for config in config_lst:
+        counter += 1
         print("Running Test with config", config)
         log_subdir = config[:-7]
         config_path = os.path.join(args.configdir, config)
@@ -61,9 +63,8 @@ if __name__ == '__main__':
         ##    "--data", os.path.join(log_path, "sim-summary.pickle")
         ##]
         ##subprocess.run(plot_command)
-        print(log_path)
-        print(args.logdir)
+        
         analyse_command = [
-            "python3", "Analyse.py", "--data", os.path.join(log_path, "sim-summary.pickle"), "--analysedir", "/Users/heloisegaspard/Desktop/THESIS/DAISIM_V3/Analyse"
+            "python3", "Analyse.py", "--data", os.path.join(log_path, "sim-summary.pickle"), "--analysedir", "/Users/heloisegaspard/Desktop/THESIS/DAISIM_V3/Analyse", "--counter", str(counter)
         ]
         subprocess.run(analyse_command)
