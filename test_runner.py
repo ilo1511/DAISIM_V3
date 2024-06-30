@@ -34,7 +34,7 @@ if __name__ == '__main__':
         config_lst.remove(".DS_Store")
     if "Fact_config.config" in config_lst:
         config_lst.remove("Fact_config.config")
-      
+    
     for config in config_lst:
         print("Running Test with config", config)
         log_subdir = config[:-7]
@@ -49,7 +49,7 @@ if __name__ == '__main__':
             "python3", "sim.py",
             "--config", config_path,
             "--logdir", log_path,
-            "--days_per_config", "1"
+            "--days_per_config", "4"
         ]
         subprocess.run(sim_command)
         
