@@ -84,10 +84,13 @@ def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_pe
     txf_axis = [args[i][6] for i in range(len(args))]
     run_axis = [args[i][7] for i in range(len(args))]
     eth_price_per_day_axis = [args[i][8] for i in range(len(args))]
+    alpha_axis = [args[i][10] for i in range(len(args))]
+
+
     dai_axis = [res[0] for res in results]
     asset_history = [res[1] for res in results]
 
-    dump = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis]
+    dump = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_axis]
     ##print(dai_axis)
     ##print("DUMP")
     pickle.dump(dump, sumfile)
