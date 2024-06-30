@@ -1,6 +1,6 @@
 import argparse
 from simulation_util import get_risk_and_herd_params
-from simulation_util import get_alpha
+from simulation_util import get_alphas
 import os
 from util import get_truncated_normal
 import itertools
@@ -123,7 +123,7 @@ def generate_configs(args):
 
         ## Generate risk, herding and alpha
         risk_params, herd_params = get_risk_and_herd_params(investors)
-        alpha = get_alpha(investors)
+        alpha_1, alpha_2 = get_alphas(investors)
 
         investor_count_line = [str(investors)]
 
@@ -158,7 +158,7 @@ def generate_configs(args):
             asset_distribution_lines = []
             for inv in range(len(USD)):
                 asset_distribution_lines.append(
-                    str(USD[inv]) + " " + str(ETH[inv]) + " " + str(DAI[inv]) + " " + str(cETH[inv]) + " " + str(risk_params[inv]) + " " + str(herd_params[inv]) + " " + str(alpha[inv]))  
+                    str(USD[inv]) + " " + str(ETH[inv]) + " " + str(DAI[inv]) + " " + str(cETH[inv]) + " " + str(risk_params[inv]) + " " + str(herd_params[inv]) + " " + str(alpha_1[inv])+ " " + str(alpha_2[inv]))  
 
                 filename = os.path.join(config_dir, "experiment_" + fact_param_to_string(fact_param) + ".config")
                 infile = open(filename, "w+")

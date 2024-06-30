@@ -22,11 +22,13 @@ def get_risk_and_herd_params(n):
             herd_params_lst.append(h_low)
     return risk_params_lst, herd_params_lst
 
-def get_alpha(n):
-    alpha = np.random.uniform(0.01,1,1)
-    alpha = [float(alpha)]*n
-    print(alpha)
-    return alpha
+def get_alphas(n):
+    alpha_1 = np.random.uniform(0.01,1,1)
+    alpha_2 = np.random.uniform(0.01,1,1)
+
+    alpha_1 = [float(alpha_1)]*n
+    alpha_2 = [float(alpha_2)]*n
+    return alpha_1, alpha_2
 
 def get_assets(n, dist="normal"):
     if dist == "uniform":
@@ -155,13 +157,14 @@ class Simulator:
     initial_distribution = None
     risk_params = None
     herd_params = None
-    alpha = 0.5
+    alpha_1 = 0.5
+    alpha_2 = 0.5
     logdir = None
     logger = False
     filename = None
     dai_price = 1
 
-    def __init__(self, belief_factor, rho, cdpRate, txf, run_index, eth_price, sample_size, initial_distribution, risk_params, herd_params, alpha, logdir, eth_price_last_period,
+    def __init__(self, belief_factor, rho, cdpRate, txf, run_index, eth_price, sample_size, initial_distribution, risk_params, herd_params, alpha_1, alpha_2, logdir, eth_price_last_period,
                  logger=False):
         self.belief_factor = belief_factor
         self.rho = rho
@@ -174,7 +177,8 @@ class Simulator:
         self.final_distribution = initial_distribution
         self.risk_params = risk_params
         self.herd_params = herd_params
-        self.alpha = alpha
+        self.alpha_1 = alpha_1
+        self.alpha_2 = alpha_2
         self.logger = logger
         self.logdir = logdir
         self.eth_price_last_period = eth_price_last_period
@@ -209,11 +213,12 @@ class Simulator:
             for j in range(self.sample_size):
                 risk_param = self.risk_params[j]
                 herd_param = self.herd_params[j]
-                alpha_param = self.alpha[j]
+                alpha_param_1 = self.alpha_1[j]
+                alpha_param_2 = self.alpha_2[j]
 
                 proposed_assets = optimize(self.belief_factor, users[j].getAssets(), self.rho, self.txf, self.cdpRate, risk_param, herd_param,
                                            self.eth_price,
-                                           dai_price,self.eth_price_last_period, alpha_param, False)
+                                           dai_price,self.eth_price_last_period, alpha_param_1, alpha_param_2, False)
 
                 old_assets = users[j].getAssets()
                 stats.append([old_assets, proposed_assets])

@@ -10,8 +10,8 @@ real_dai = np.array([1,1.02,1,1])
 
 def analyse(filename, counter):
     input_file = open(filename, 'rb')
-    cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_axis = pickle.load(input_file)
-    data = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_axis]
+    cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis = pickle.load(input_file)
+    data = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis]
     
     output_dai = np.array(dai_axis[0])
 
@@ -22,7 +22,9 @@ def analyse(filename, counter):
     log_filename = f'Analyse/{counter}_analysis_log.log'
         
     log(f'error: {error}', log_filename, flag=True)
-    log(f'alpha: {alpha_axis[0][0]}', log_filename, flag=True )
+    log(f'alpha_1: {alpha_1_axis[0][0]}', log_filename, flag=True )
+    log(f'alpha_2: {alpha_2_axis[0][0]}', log_filename, flag=True )
+
         # Log h_low and h_high
 
     log(f'h_low: {h_low}', log_filename, flag=True)

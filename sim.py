@@ -9,7 +9,7 @@ RISK = None
 HERD = None
 
 
-def run_on_thread(sample_size, belief_factor, assets, risk_params, herd_params, cdp_rate, tx_fee, run_index, eth_price_per_day, days_per_config, alpha,
+def run_on_thread(sample_size, belief_factor, assets, risk_params, herd_params, cdp_rate, tx_fee, run_index, eth_price_per_day, days_per_config, alpha_1, alpha_2,
                   logdir, logger): 
     dai_price_history = []
     market_dai_history = []
@@ -22,7 +22,7 @@ def run_on_thread(sample_size, belief_factor, assets, risk_params, herd_params, 
     for day in range(0, days_per_config):
         s = Simulator(belief_factor=belief_factor, rho=2.5, cdpRate=cdp_rate, txf=tx_fee, run_index=run_index, eth_price=eth_price_per_day[day],
                       sample_size=sample_size,
-                      initial_distribution=cur_assets, risk_params=risk_params, herd_params=herd_params, alpha = alpha, logdir=logdir, logger=logger, eth_price_last_period=eth_price_per_day[day-1])
+                      initial_distribution=cur_assets, risk_params=risk_params, herd_params=herd_params, alpha_1 = alpha_1, alpha_2 = alpha_2, logdir=logdir, logger=logger, eth_price_last_period=eth_price_per_day[day-1])
         s.dai_price = cur_dai_price
         dai_price, market_dai = s.run_simulation()
 
@@ -43,13 +43,13 @@ def run_on_thread(sample_size, belief_factor, assets, risk_params, herd_params, 
 def generate_assets_and_params(sample_size, test_type, runs):
     # if ASSETS was populated from config, return. Else generate a random ASSETS
     if ASSETS is not None:
-        return ASSETS, RISK, HERD, ALPHA
+        return ASSETS, RISK, HERD, ALPHA_1, ALPHA_2
 
     assets_runs = [get_assets(sample_size, test_type) for k in range(runs)]
     risk_params, herd_params = get_risk_and_herd_params(sample_size)
-    alpha = get_alpha(sample_size)
+    alpha_1, alpha_2 = get_alphas(sample_size)
 
-    return assets_runs, risk_params, herd_params, alpha
+    return assets_runs, risk_params, herd_params, alpha_1, alpha_2
 
 
 def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_per_day, days_per_config, test_type, logdir, logger,
@@ -65,14 +65,14 @@ def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_pe
 
     # Define initial allocation and risk distribution
     # If multiple runs, then each run has a different asset allocation, but same risk distribution.
-    assets_runs, risk_params, herd_params, alpha = generate_assets_and_params(sample_size, test_type, runs)
+    assets_runs, risk_params, herd_params, alpha_1, alpha_2 = generate_assets_and_params(sample_size, test_type, runs)
 
     for tx_fee in tx_fees:
         for cdp_rate in cdp_rates:
             for run in range(runs):
                 args.append(
                     (sample_size, belief_factor, assets_runs[run], risk_params, herd_params, cdp_rate, tx_fee, run, eth_price_per_day,
-                     days_per_config, alpha, logdir, logger)) 
+                     days_per_config, alpha_1, alpha_2, logdir, logger)) 
 
     results = pool.starmap(run_on_thread, args)
 
@@ -84,13 +84,14 @@ def run_tests(sample_size, belief_factor, cdp_rates, tx_fees, runs, eth_price_pe
     txf_axis = [args[i][6] for i in range(len(args))]
     run_axis = [args[i][7] for i in range(len(args))]
     eth_price_per_day_axis = [args[i][8] for i in range(len(args))]
-    alpha_axis = [args[i][10] for i in range(len(args))]
+    alpha_1_axis = [args[i][10] for i in range(len(args))]
+    alpha_2_axis = [args[i][11] for i in range(len(args))]
 
 
     dai_axis = [res[0] for res in results]
     asset_history = [res[1] for res in results]
 
-    dump = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_axis]
+    dump = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis]
     ##print(dai_axis)
     ##print("DUMP")
     pickle.dump(dump, sumfile)
@@ -176,7 +177,8 @@ if __name__ == '__main__':
     assets = []
     risk_params = []
     herd_params = []
-    alpha = []
+    alpha_1 = []
+    alpha_2 = []
     if len(config_lines) > 3:
         # Config overrides parameters set in CLI, currently this only supports 1 run.
         print("Config might override parameters set by CLI")
@@ -185,18 +187,20 @@ if __name__ == '__main__':
         args.runs = 1
         for i in range(4, 4 + args.investors):
             line_split = list(map(float, config_lines[i].split(' ')))
-            assert (len(line_split) == 7)
+            assert (len(line_split) == 8)
 
-            assets.append(line_split[:-3])
-            risk_params.append(line_split[-3])
-            herd_params.append(line_split[-2])
-            alpha.append(line_split[-1])
+            assets.append(line_split[:-4])
+            risk_params.append(line_split[-4])
+            herd_params.append(line_split[-3])
+            alpha_1.append(line_split[-2])
+            alpha_2.append(line_split[-1])
 
         # Fix global values of ASSETS, RISK
         ASSETS = [assets]
         RISK = risk_params
         HERD = herd_params
-        ALPHA = alpha
+        ALPHA_1 = alpha_1
+        ALPHA_2 = alpha_2
         
     if len(eth_price_per_day) < args.days_per_config:
         args.days_per_config = len(eth_price_per_day)

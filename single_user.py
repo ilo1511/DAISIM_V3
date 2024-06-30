@@ -26,7 +26,7 @@ def get_optimization_params():
     return mu, cor, d
 
 ## w = risk aversion!
-def optimize(belief_factor, x_start, rho, txf, cdprate, w, h, eth_price, dai_price, eth_price_last_period, alpha, debug=True):
+def optimize(belief_factor, x_start, rho, txf, cdprate, w, h, eth_price, dai_price, eth_price_last_period, alpha_1, alpha_2, debug=True):
     # Compute asset worth given ETH Price
     asset_prices = np.array([1, eth_price, dai_price, eth_price])
     assets_dollars = np.multiply(x_start, asset_prices)
@@ -55,7 +55,7 @@ def optimize(belief_factor, x_start, rho, txf, cdprate, w, h, eth_price, dai_pri
     delta_eth_price = eth_price - eth_price_last_period
 
     # Herd behavior term: investor follows the trend to buy more if price is increasing, sell if decreasing
-    herd_behavior = h * (exp (alpha * delta_eth_price/eth_price_last_period) - exp(alpha * ( - (delta_eth_price/eth_price_last_period))))  * eth
+    herd_behavior = h * (exp (alpha_1 * delta_eth_price/eth_price_last_period) - exp(alpha_2 * ( - (delta_eth_price/eth_price_last_period))))  * eth
 
     # objective function updated with herd behavior
     objective = cp.Maximize(mu.T @ x - w * cp.quad_form(x, cvr) - cdprate * ceth - tx_fee + belief_factor*(dai2/dai_price)*(dai_price-1) - belief_factor*(dai1/dai_price)*(dai_price-1) + herd_behavior)
