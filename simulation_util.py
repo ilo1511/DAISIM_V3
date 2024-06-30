@@ -2,6 +2,7 @@ from single_user import optimize
 import os
 from util import User, get_truncated_normal, log, getAssetLogString
 import random
+import numpy as np
 
 # how often must you log, this is every 10 iterations
 LOG_ITER = 10
@@ -10,15 +11,22 @@ LOG_ITER = 10
 def get_risk_and_herd_params(n):
     risk_params_lst = []
     herd_params_lst = []
+    h_low = float(np.random.uniform(0,3,1))
+    h_high = float(np.random.uniform(3,5,1))
     for i in range(n):
         if random.random() < 0.5:
             risk_params_lst.append(0.001)
-            herd_params_lst.append(5)
+            herd_params_lst.append(h_high)
         else:
             risk_params_lst.append(0.01)
-            herd_params_lst.append(1)
+            herd_params_lst.append(h_low)
     return risk_params_lst, herd_params_lst
 
+def get_alpha(n):
+    alpha = np.random.uniform(0.01,1,1)
+    alpha = [float(alpha)]*n
+    print(alpha)
+    return alpha
 
 def get_assets(n, dist="normal"):
     if dist == "uniform":
@@ -186,7 +194,7 @@ class Simulator:
     def run_simulation(self):
         dai_price = self.dai_price
         # dai_price = 1
-        iterations = 50
+        iterations = 10
 
         users = [User(self.initial_distribution[i], self.rho) for i in range(len(self.initial_distribution))]
 
