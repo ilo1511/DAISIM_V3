@@ -61,3 +61,9 @@ if __name__ == '__main__':
         ##    "--data", os.path.join(log_path, "sim-summary.pickle")
         ##]
         ##subprocess.run(plot_command)
+        print(log_path)
+        print(args.logdir)
+        analyse_command = [
+            "python3", "Analyse.py", "--data", os.path.join(log_path, "sim-summary.pickle"), "--analysedir", "/Users/heloisegaspard/Desktop/THESIS/DAISIM_V3/Analyse"
+        ]
+        subprocess.run(analyse_command)
