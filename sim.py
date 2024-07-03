@@ -150,9 +150,9 @@ if __name__ == '__main__':
         help="Config File for test",
         required=True
     )
+    
 
     args = parser.parse_args()
-    print(args)
     # Clear log directory if found
     if os.path.exists(args.logdir):
         os.system("rm -rvf " + args.logdir + "/*")
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     cdp_config = config_lines[0].split(' ')
     txf_config = config_lines[1].split(' ')
 
-    eth_price_per_day = list(map(int, config_lines[2].split(' ')))
+    eth_price_per_day = list(map(float, config_lines[2].split(' ')))
 
     # If this happens, then assets/risk have been provided in the config
     assets = []
@@ -219,7 +219,8 @@ if __name__ == '__main__':
     print("--logidr", args.logdir)
     print("--config", args.config)
 
-    run_tests(args.investors, belief_factor, cdp_rates, tx_fees, args.runs, eth_price_per_day, args.days_per_config,  args.type,
+    run_tests(args.investors, belief_factor, cdp_rates, tx_fees, args.runs, eth_price_per_day, args.days_per_config, args.type,
               args.logdir,
               args.log, sumfile) 
     sumfile.close()
+

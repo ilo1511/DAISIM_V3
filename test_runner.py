@@ -35,23 +35,20 @@ if __name__ == '__main__':
     if "Fact_config.config" in config_lst:
         config_lst.remove("Fact_config.config")
     
-    counter = 0
+
     for config in config_lst:
-        counter += 1
         print("Running Test with config", config)
         log_subdir = config[:-7]
         config_path = os.path.join(args.configdir, config)
         log_path = os.path.join(args.logdir, log_subdir)
         
-        print(config)
-        print(args.configdir)
         
         # Running sim.py
         sim_command = [
             "python3", "sim.py",
             "--config", config_path,
             "--logdir", log_path,
-            "--days_per_config", "4"
+            "--days_per_config", "10",
         ]
         subprocess.run(sim_command)
         
@@ -65,6 +62,10 @@ if __name__ == '__main__':
         ##subprocess.run(plot_command)
         
         analyse_command = [
-            "python3", "Analyse.py", "--data", os.path.join(log_path, "sim-summary.pickle"), "--analysedir", "/Users/heloisegaspard/Desktop/THESIS/DAISIM_V3/Analyse", "--counter", str(counter)
+            "python3", "Analyse.py", 
+            "--data", os.path.join(log_path, "sim-summary.pickle"), 
+            "--analysedir", "/Users/heloisegaspard/Desktop/THESIS/DAISIM_V3/Analyse",
+            "--logdir", log_path
+            
         ]
         subprocess.run(analyse_command)

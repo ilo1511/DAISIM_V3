@@ -5,7 +5,7 @@ import random
 import numpy as np
 
 # how often must you log, this is every 10 iterations
-LOG_ITER = 10
+LOG_ITER = 5
 
 
 def get_risk_and_herd_params(n):
@@ -164,6 +164,7 @@ class Simulator:
     filename = None
     dai_price = 1
 
+
     def __init__(self, belief_factor, rho, cdpRate, txf, run_index, eth_price, sample_size, initial_distribution, risk_params, herd_params, alpha_1, alpha_2, logdir, eth_price_last_period,
                  logger=False):
         self.belief_factor = belief_factor
@@ -183,9 +184,9 @@ class Simulator:
         self.logdir = logdir
         self.eth_price_last_period = eth_price_last_period
         self.filename = os.path.join(logdir,
-                                     "CDPRate{" + str(self.cdpRate) + "}TXF{" + str(self.txf) + "}RUN{" + str(
-                                         self.run_index) + "}.txt")
+                                     "Simulation output" + ".txt")
         self.market = True
+        
 
         log("Simulation object created: CDP Rate %f, txFee %f, ETH Price %f, Sample Size %d, Belief Factor %d" % (
             cdpRate, txf, eth_price, sample_size, belief_factor), self.filename, self.logger)
@@ -268,4 +269,6 @@ class Simulator:
                 self.logger)
 
         log("simulation ends", self.filename, self.logger)
+        print(dai_price)
         return dai_price, market_dai
+        
