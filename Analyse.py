@@ -6,9 +6,20 @@ import numpy as np
 import random
 import hashlib
 
-real_dai = np.array([1,1.02,1,1])
+real_dai = np.array([
+    0.9823168714116849,
+    1.0012910911585053,
+    0.9927457318504361,
+    1.0108500607359714,
+    1.0034916118557553,
+    1.00410410742985,
+    1.0050388561999308,
+    1.0006603639383553,
+    1.002406985420573,
+    1.0005249869266737
+])
 
-def analyse(filename, counter):
+def analyse(filename, analysedir, logdir):
     input_file = open(filename, 'rb')
     cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis = pickle.load(input_file)
     data = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis]
@@ -19,7 +30,10 @@ def analyse(filename, counter):
     h_low = np.min(herd_params_axis)
     h_high = np.max(herd_params_axis)
     
-    log_filename = f'Analyse/{counter}_analysis_log.log'
+    
+    log_filename = os.path.join(analysedir, f"{os.path.basename(logdir)}_Analyse_output.txt")
+    
+    print(log_filename)
         
     log(f'error: {error}', log_filename, flag=True)
     log(f'alpha_1: {alpha_1_axis[0][0]}', log_filename, flag=True )
@@ -57,12 +71,12 @@ if __name__ == '__main__':
     )
     
     parser.add_argument(
-        "--counter",
-        type=int,
-        default=0,
-        required=True,
-        help="Counter to give name to analyse file"
+        "--logdir",
+        type=str,
+        default="sim-logs",
+        help="Log Directory"
     )
+
     
     args = parser.parse_args()
-    analyse(args.data, args.counter)
+    analyse(args.data, args.analysedir, args.logdir)
