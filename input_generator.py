@@ -74,10 +74,12 @@ def get_all_bitmasks(num_investors):
 # TODO: Optimize this later.
 def generate_configs(args):
     # lines defining the cdp, txf inputs and price history.
+    counter = 0
+    
     lines = [
         "6 7 0.01",
         "1 2 0.01",
-        "500 1000 1200 1300 1400 1500 1400 1300 1100"
+        "232.78138524562493 231.1436846227436 225.79485382934473 220.47446029228064 222.19584779064576 228.03607024893918 225.06880731767052 225.65834864130284 229.52461502629828 227.9689077917784"
     ]
 
     config_dir = args.config_dir
@@ -109,8 +111,8 @@ def generate_configs(args):
         alpha_bitmasks = []
         
     # Initial Distribution Tests
-    
     for fact_param in fact_params:
+        counter += 1
         print("Generating Configs for", fact_param)
 
         # Generate the input distribution
@@ -160,9 +162,10 @@ def generate_configs(args):
                 asset_distribution_lines.append(
                     str(USD[inv]) + " " + str(ETH[inv]) + " " + str(DAI[inv]) + " " + str(cETH[inv]) + " " + str(risk_params[inv]) + " " + str(herd_params[inv]) + " " + str(alpha_1[inv])+ " " + str(alpha_2[inv]))  
 
-                filename = os.path.join(config_dir, "experiment_" + fact_param_to_string(fact_param) + ".config")
+                filename = os.path.join(config_dir, "experiment_" + str(counter) + ".config")
+                
                 infile = open(filename, "w+")
-
+                
                 # Write to config file
                 for line in lines + investor_count_line + asset_distribution_lines + belief_factor_line:
                     infile.write(line + "\n")
