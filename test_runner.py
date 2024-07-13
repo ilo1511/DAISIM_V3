@@ -48,7 +48,7 @@ if __name__ == '__main__':
             "python3", "sim.py",
             "--config", config_path,
             "--logdir", log_path,
-            "--days_per_config", "10",
+            "--days_per_config", "15",
         ]
         subprocess.run(sim_command)
         

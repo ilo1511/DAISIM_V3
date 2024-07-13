@@ -125,7 +125,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--days_per_config",
         type=int,
-        default=1,
+        default=15,
         help="Number of days to run the simulation for each CDPRate TXF Pair"
     )
 
@@ -208,7 +208,7 @@ if __name__ == '__main__':
 
     cdp_rates = [float(cdp_config[2]) * i for i in range(int(cdp_config[0]), int(cdp_config[1]))]
     tx_fees = [float(txf_config[2]) * i for i in range(int(txf_config[0]), int(txf_config[1]))]
-    belief_factor = float(config_lines[14])
+    belief_factor = float(config_lines[-1])
 
     print("Input Parameters for Test")
     print("--investors", args.investors)

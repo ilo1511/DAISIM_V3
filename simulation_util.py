@@ -5,14 +5,14 @@ import random
 import numpy as np
 
 # how often must you log, this is every 10 iterations
-LOG_ITER = 5
+LOG_ITER = 2
 
 
 def get_risk_and_herd_params(n):
     risk_params_lst = []
     herd_params_lst = []
-    h_low = float(np.random.uniform(0,3,1))
-    h_high = float(np.random.uniform(3,5,1))
+    h_low = float(np.random.uniform(0,0.5,1))
+    h_high = float(np.random.uniform(0.5,1,1))
     for i in range(n):
         if random.random() < 0.5:
             risk_params_lst.append(0.001)
@@ -23,12 +23,16 @@ def get_risk_and_herd_params(n):
     return risk_params_lst, herd_params_lst
 
 def get_alphas(n):
-    alpha_1 = np.random.uniform(0.01,1,1)
-    alpha_2 = np.random.uniform(0.01,1,1)
+    alpha_1 = np.random.uniform(0,5,1)
+    alpha_2 = np.random.uniform(0,5,1)
 
     alpha_1 = [float(alpha_1)]*n
     alpha_2 = [float(alpha_2)]*n
     return alpha_1, alpha_2
+
+def get_belief_factor():
+    belief = np.random.uniform(8,13)
+    return belief
 
 def get_assets(n, dist="normal"):
     if dist == "uniform":
@@ -199,7 +203,7 @@ class Simulator:
     def run_simulation(self):
         dai_price = self.dai_price
         # dai_price = 1
-        iterations = 10
+        iterations = 15
 
         users = [User(self.initial_distribution[i], self.rho) for i in range(len(self.initial_distribution))]
 

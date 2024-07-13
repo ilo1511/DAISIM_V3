@@ -1,53 +1,67 @@
 import argparse
 import pickle
 import os
-from util import log
 import numpy as np
-import random
-import hashlib
+import pandas as pd
+from util import log
 
 real_dai = np.array([
-    0.9823168714116849,
-    1.0012910911585053,
-    0.9927457318504361,
-    1.0108500607359714,
-    1.0034916118557553,
-    1.00410410742985,
-    1.0050388561999308,
-    1.0006603639383553,
-    1.002406985420573,
-    1.0005249869266737
-])
+    1.0060445265046256,
+    0.9991222915044283,
+    1.0050328043302443,
+    0.9969789216188777,
+    0.9888977681277664,
+    0.986556026998058,
+    1.004015281990389,
+    0.9945960976838956,
+    1.001086653565765,
+    0.9985420059997772,
+    1.0011374006732177,
+    0.9944209489772055,
+    0.9942691001257494,
+    0.993309360008666,
+    0.9954298052411727
+    ])
 
 def analyse(filename, analysedir, logdir):
-    input_file = open(filename, 'rb')
-    cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis = pickle.load(input_file)
-    data = [cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis]
-    
+    with open(filename, 'rb') as input_file:
+        cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis = pickle.load(input_file)
+        
     output_dai = np.array(dai_axis[0])
-
-    error = sum((output_dai - real_dai)**2)
+    error = sum((output_dai - real_dai) ** 2)
     h_low = np.min(herd_params_axis)
     h_high = np.max(herd_params_axis)
-    
-    
+    alpha_1 = alpha_1_axis[0][0]
+    alpha_2 = alpha_2_axis[0][0]
+    belief = belief_factor_axis[0]
+
     log_filename = os.path.join(analysedir, f"{os.path.basename(logdir)}_Analyse_output.txt")
-    
-    print(log_filename)
         
     log(f'error: {error}', log_filename, flag=True)
-    log(f'alpha_1: {alpha_1_axis[0][0]}', log_filename, flag=True )
-    log(f'alpha_2: {alpha_2_axis[0][0]}', log_filename, flag=True )
-
-        # Log h_low and h_high
-
+    log(f'alpha_1: {alpha_1}', log_filename, flag=True)
+    log(f'alpha_2: {alpha_2}', log_filename, flag=True)
     log(f'h_low: {h_low}', log_filename, flag=True)
     log(f'h_high: {h_high}', log_filename, flag=True)
-    
-    # Log herd_params_axis and alpha_axis
+    log(f'belief_factor: {belief}', log_filename, flag=True)
+
     for value_list in [dai_axis]:
         for value in value_list:
             log(f'{value}', log_filename, flag=True)
+            
+    # Check if the dataframe already exists
+    if os.path.exists('experiment_data.csv'):
+        df = pd.read_csv('experiment_data.csv')
+    else:
+        df = pd.DataFrame(columns=['belief', 'h_low', 'h_high', 'alpha_1', 'alpha_2', 'error'])
+
+    # Create a new row for the current experiment
+    new_row = pd.DataFrame({'belief': [belief], 'h_low': [h_low], 'h_high': [h_high], 'alpha_1': [alpha_1], 'alpha_2': [alpha_2], 'error': [error]})
+
+    # Append the new row to the dataframe
+    df = pd.concat([df, new_row], ignore_index=True)
+
+    # Save the updated dataframe to a csv file
+    df.to_csv('experiment_data.csv', index=False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='MAKER Sim Plotter CLI')
@@ -58,7 +72,6 @@ if __name__ == '__main__':
         default="",
         required=True,
         help="Path to a sim-summary.pickle"
-        
     )
     
     parser.add_argument(
@@ -67,7 +80,6 @@ if __name__ == '__main__':
         default="",
         required=True,
         help="Path to a directory for analysis files"
-        
     )
     
     parser.add_argument(
@@ -77,6 +89,5 @@ if __name__ == '__main__':
         help="Log Directory"
     )
 
-    
     args = parser.parse_args()
     analyse(args.data, args.analysedir, args.logdir)

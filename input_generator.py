@@ -1,6 +1,7 @@
 import argparse
 from simulation_util import get_risk_and_herd_params
 from simulation_util import get_alphas
+from simulation_util import get_belief_factor
 import os
 from util import get_truncated_normal
 import itertools
@@ -79,8 +80,7 @@ def generate_configs(args):
     lines = [
         "6 7 0.01",
         "1 2 0.01",
-        "232.78138524562493 231.1436846227436 225.79485382934473 220.47446029228064 222.19584779064576 228.03607024893918 225.06880731767052 225.65834864130284 229.52461502629828 227.9689077917784"
-    ]
+        "398.77335502107474 412.6893456266917 427.3849460078481 488.60548934434905 488.99218126708564 495.11291363236046 525.5274445398754 507.11031309582995 498.46700764950907 517.3740431959737 566.3920838512778 590.27192246768 600.2596767733208 617.2024078855728 636.3671638965957" ]
 
     config_dir = args.config_dir
     investors = args.investors
@@ -129,7 +129,7 @@ def generate_configs(args):
 
         investor_count_line = [str(investors)]
 
-        belief_factor_line = [str(10)] # TODO: make this configurable
+        belief_factor_line = [str(get_belief_factor())]
 
         # If Risk Parameter Testing is enabled, we generate all risk bitmasks for a particular fact_param.
         if RISK_PARAM_TESTING:
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--investors",
         type=int,
-        default="10",
+        default="15",
         help="Number of investors"
     )
 
