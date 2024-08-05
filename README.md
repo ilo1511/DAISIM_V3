@@ -26,7 +26,9 @@ The repository contains code for simulating a population of investors in the DAI
             - A lower numerical value for risk translates to high risk.
             - A lower numerical value for herding translates to lower herding
     - `belief_factor`: A constant indicating the strength of investors' belief that the price of DAI is 1.
-    - 'alpha': a constant that influences the price change sensitivity of our herding exponential function
+    - `alpha_1`: a constant indicating the price sensitivity of herding to positive price changes
+    -`alpha_2`: a constant indicating the price sensitivity of herding to positive price changes
+    
    
 
 - A sample config file is shown below for a MAKER DAO market simulation for a set of `tx_fee` and `cdp_rate` combinations. The config
@@ -36,25 +38,22 @@ will be used to run 5 * 3 = 15 single market simulations with the given asset al
 1 2 0.01                                     // tx_fees = [0.05, 0.06, 0.07]
 50 50 150 200                                // ETH Price  (4-day market simulation)
 10                                           // num_investors
-1840 5 1840 0 0.001 4                        // Investor#0 Assets, Risk = 0.001, Herding = 4
-970 4 970 0 0.01 1                            // Investor#1 Assets, Risk = 0.001, Herding = 1
-900 8 900 0 0.001 4                         // Investor#2 Assets, Risk = 0.01, Herding = 1
-710 5 710 0 0.01 1                           // Investor#3 Assets, Risk = 0.01, Herding = 1
-840 6 840 0 0.001 4                            // Investor #4 Assets, Risk = 0.001, Herding = 4
-1040 2 1040 0 0.01 1                            // Investor #5 Assets, Risk = 0.01, Herding = 1
-1360 8 1360 0 0.001 4                        // Investor #6 Assets, Risk = 0.001, Herding = 4
-870 8 870 0 0.01 1                            // Investor #7 Assets, Risk = 0.01, Herding = 1
-1340 7 1340 0 0.001 4                        // Investor #8 Assets, Risk = 0.001, Herding = 4
-890 4 890 0 0.01 1                        // Investor #9 Assets, Risk = 0.01, Herding = 1
+1840 5 1840 0 0.001 4 0.5 0.7                    // Investor#0 Assets, Risk = 0.001, Herding = 4
+970 4 970 0 0.01 1 0.5 0.7                           // Investor#1 Assets, Risk = 0.001, Herding = 1
+900 8 900 0 0.001 4 0.5 0.7                         // Investor#2 Assets, Risk = 0.01, Herding = 1
+710 5 710 0 0.01 1 0.5 0.7                            // Investor#3 Assets, Risk = 0.01, Herding = 1
+840 6 840 0 0.001 4 0.5 0.7                              // Investor #4 Assets, Risk = 0.001, Herding = 4
+1040 2 1040 0 0.01 1 0.5 0.7                            // Investor #5 Assets, Risk = 0.01, Herding = 1
+1360 8 1360 0 0.001 4 0.5 0.7                         // Investor #6 Assets, Risk = 0.001, Herding = 4
+870 8 870 0 0.01 1 0.5 0.7                             // Investor #7 Assets, Risk = 0.01, Herding = 1
+1340 7 1340 0 0.001 4 0.5 0.7                         // Investor #8 Assets, Risk = 0.001, Herding = 4
+890 4 890 0 0.01 1 0.5 0.7                          // Investor #9 Assets, Risk = 0.01, Herding = 1
 10                                            // belief_factor = 10
-1                                            // alpha = 1
-```
 
-!!!! COMMANDS ARE IDENTIC TO BASE CODE, ONLY FIRST ONE WORKS CURRENTLY
+alpha_1 and alpha_2 are respectively 0.5 and 0.7
+
 
 - Running MAKER DAO market simulations,
     - `python3 sim.py --config path/to/config --logdir path/to/log/directory --days_per_config num_days_per_config` : Running this generates a file `sim-summary.pickle` inside the log directory
-    which is used to generate useful plots.
-    - `python3 plot_gen.py --data path/to/log/directory/sim-summary.pickle` : Running this generates several useful plots for the simulation. All generated plots would show up in a `plots`
-    directory under the log directory.
-    - `python3 test_runner.py --logdir /path/to/log/directory --configdir /path/to/config/directory` : Running this performs market simulation with several test configs under a single directory i.e configdir.
+
+    - `python3 test_runner.py --logdir /path/to/log/directory --configdir /path/to/config/directory --analysedir /path/to/analyse/directory` : Running this performs market simulation with several test configs under a single directory i.e configdir and then analyses the result and stores the analyse files in the analyse directory
