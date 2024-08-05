@@ -28,7 +28,9 @@ def analyse(filename, analysedir, logdir):
         cdp_axis, txf_axis, run_axis, dai_axis, asset_history, risk_params_axis, herd_params_axis, belief_factor_axis, eth_price_per_day_axis, alpha_1_axis, alpha_2_axis = pickle.load(input_file)
         
     output_dai = np.array(dai_axis[0])
-    error = sum((output_dai - real_dai) ** 2)
+    correlation = np.corrcoef(dai_axis,real_dai)
+    mse = np.square(np.subtract(dai_axis, real_dai.mean()))
+    rmse = np.sqrt(mse)
     h_low = np.min(herd_params_axis)
     h_high = np.max(herd_params_axis)
     alpha_1 = alpha_1_axis[0][0]
@@ -36,7 +38,11 @@ def analyse(filename, analysedir, logdir):
     belief = belief_factor_axis[0]
 
     log_filename = os.path.join(analysedir, f"{os.path.basename(logdir)}_Analyse_output.txt")
-        
+    
+    error = 0.4*(1-correlation) + 0.6*rmse
+    
+    log(f'rmse: {rmse}',log_filename, flag=True)
+    log(f'correlation: {correlation}',log_filename, flag=True)
     log(f'error: {error}', log_filename, flag=True)
     log(f'alpha_1: {alpha_1}', log_filename, flag=True)
     log(f'alpha_2: {alpha_2}', log_filename, flag=True)
